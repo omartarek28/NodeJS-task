@@ -26,7 +26,6 @@ export const addTodo = async (req: Request, res: Response): Promise<any> => {
     res.status(500).json({ message: error.message });
   }
 };
-
 export const updateTodo = async (req: Request, res: Response): Promise<any> => {
   const {userId, todoId} = req.params;
   
@@ -56,13 +55,26 @@ export const deleteTodo = async (req: Request, res: Response): Promise<any> => {
     res.status(500).json({ message: error.message });
   }
 };
-
 export const getTodo = async (req: Request, res: Response): Promise<any> => {
   const {userId, todoId} = req.params;
   try {
     const toDo = await ToDoModel.findOne({ _id: todoId, userId: userId });
 
     if (!toDo) {
+      return res.status(404).send('ToDo not found');
+    }
+
+    res.status(200).json(toDo);
+  } catch (error:any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const getAllTodo = async (req: Request, res: Response): Promise<any> => {
+  const {userId} = req.params;
+  try {
+    const toDo:any = await ToDoModel.find({ userId: userId });
+
+    if (!toDo && toDo.length == 0) {
       return res.status(404).send('ToDo not found');
     }
 
